@@ -1,64 +1,74 @@
+function defShipGenerator() {
+  return {
+    pos: createVector(Game.cx/2, Game.cy/2),
+    vel: createVector(0, 0),
+    defAcc: 0.5,
+    defTurn: 0.1,
+    size: 20,
+    angle: PI/2,
+  }
+}
+
 class Ship {
-  constructor(pos = createVector(width/2, height/2), size = 20, angle = PI/2, space = createVector(width, height)) {
-    this.pos =  pos;
-    this.space = space;
-    this.vel =  createVector(0, 0);
+  constructor(params = Game.shipGenerator()) {
+    this.pos =  params.pos;
+    this.vel =  params.vel;
     this.acc =  0;
-    this.defacc = 0.5;
-    this.r = size;
-    this.heading =  angle;
+    this.defAcc = params.defAcc;
+    this.r = params.size;
+    this.heading =  params.angle;
     this.turnAngle =  0;
+    this.defTurn = params.defTurn;
   }
 
-  turnStart(angle) {
-    this.turnAngle = angle;
-  }
+  turnRight() {this.turnAngle = this.defTurn;}
 
-  turnStop() {
-    this.turnAngle = 0;
-  }
+  turnLeft() {this.turnAngle = -this.defTurn;}
 
-  turn() {
-    this.heading += this.turnAngle;
-  }
+  turnStop() {this.turnAngle = 0;}
 
-  accelerate() {
-    if (this.acc)
-      this.vel.add(p5.Vector.fromAngle(this.heading - PI/2).mult(this.acc));
-  }
+  boost() {this.acc = this.defAcc;}
 
-  boost(r) {
-    this.acc = r;
-  }
+  boostStop() {this.acc = 0;}
+
+  boostBack() {this.acc = -this.defAcc;}
 
   render() {
+    push();
     translate(this.pos.x, this.pos.y);
     rotate(this.heading);
-    noFill();
+    fill(0);
     stroke(255);
     triangle(-this.r, this.r, this.r, this.r, 0, -this.r);
+    pop();
   }
 
   edges() {
     if (this.pos.x < -this.r)
-      this.pos.x = this.space.x + this.r;
-    if (this.pos.x > this.space.x + this.r)
+      this.pos.x = Game.cx + this.r;
+    if (this.pos.x > Game.cx + this.r)
       this.pos.x = -this.r;
     if (this.pos.y < -this.r)
-      this.pos.y = this.space.y + this.r;
-    if (this.pos.y > this.space.y + this.r)
+      this.pos.y = Game.cy + this.r;
+    if (this.pos.y > Game.cy + this.r)
       this.pos.y = -this.r;
+  }
 
-    //this.pos.x = ((this.pos.x % this.space.x) + this.space.x) % this.space.x;
-    //this.pos.y = ((this.pos.y % this.space.y) + this.space.y) % this.space.y;
+  fire() {
+    Laser.create(this.pos.copy(), p5.Vector.fromAngle(this.heading - PI/2).mult(10))
   }
 
   tick() {
-    this.turn();
-    this.accelerate();
+    // Turning
+    this.heading += this.turnAngle;
+    // Accelerating
+    if (this.acc)
+      this.vel.add(p5.Vector.fromAngle(this.heading - PI/2).mult(this.acc));
+    // Moving
     this.pos.add(this.vel);
+    // Keep to the canvas
     this.edges();
+    // Motion Dampening
     this.vel.mult(0.98);
-    // ship.fire();
   }
 }

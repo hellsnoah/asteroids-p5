@@ -1,44 +1,42 @@
-let ship;
-
 function setup() {
-  createCanvas(windowWidth-50, windowHeight-50);
-  ship = shipCreate();
+  Game.cx = windowWidth - 50;
+  Game.cy = windowHeight - 50;
+  createCanvas(Game.cx, Game.cy);
+  Game.init();
+}
+
+function draw() {
+  background(0);
+  Game.gameLoopFunc();
 }
 
 function keyPressed() {
   switch (keyCode) {
     case RIGHT_ARROW:
-      ship.turnStart(0.1);
+      Game.ship.turnRight();
       break;
     case LEFT_ARROW:
-      ship.turnStart(-0.1);
+      Game.ship.turnLeft();
       break;
     case UP_ARROW:
-      ship.boost(ship.defacc);
+      Game.ship.boost();
       break;
     case DOWN_ARROW:
-      ship.boost(-ship.defacc);
+      Game.ship.boostBack();
+      break;
+    case 32: // Space
+      Game.ship.fire();
       break;
     default:
   };
 }
 
 function keyReleased() {
-  if (keyCode == RIGHT_ARROW && ship.turnAngle > 0) {
-    ship.turnStop();
-  } else if (keyCode == LEFT_ARROW && ship.turnAngle < 0) {
-    ship.turnStop();
+  if (keyCode == RIGHT_ARROW && Game.ship.turnAngle > 0) {
+    Game.ship.turnStop();
+  } else if (keyCode == LEFT_ARROW && Game.ship.turnAngle < 0) {
+    Game.ship.turnStop();
   } else if (keyCode == UP_ARROW || keyCode == DOWN_ARROW) {
-    ship.boost(0);
+    Game.ship.boostStop();
   }
-}
-
-function draw() {
-  background(0);
-  ship.tick(); // Update method
-  ship.render();
-}
-
-function shipCreate() {
-  return new Ship();
 }
