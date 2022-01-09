@@ -13,9 +13,13 @@ class Laser {
       let laser = this.lasers[i];
       let gv = createVector(Game.cx, Game.cy);
       laser.pos.add(laser.vel);
-      laser.pos.rem(gv);
-      laser.pos.add(gv);
-      laser.pos.rem(gv);
+
+      // if outside screen
+      if ((laser.pos.x < 0) || (laser.pos.x > Game.cx) ||
+          (laser.pos.y < 0) || (laser.pos.y > Game.cy)) {
+        this.lasers.splice(i, 1);
+        continue;
+      }
 
       // Check if it hits any asteroids
       for (let j = Game.asteroids.length - 1; j >= 0; j--) {
@@ -23,6 +27,7 @@ class Laser {
         let d = asteroid.pos.dist(laser.pos);
         if (d < asteroid.r) { // Hits
           Game.breakup(j);
+          Game.increaseScore(asteroid.r);
           this.lasers.splice(i, 1);
           break;
         }

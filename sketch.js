@@ -7,7 +7,6 @@ function setup() {
 }
 
 function draw() {
-  background(0);
   Game.gameLoopFunc();
 }
 
@@ -33,11 +32,16 @@ function keyPressed() {
 }
 
 function keyReleased() {
-  if (keyCode == RIGHT_ARROW && Game.ship.turnAngle > 0) {
-    Game.ship.turnStop();
-  } else if (keyCode == LEFT_ARROW && Game.ship.turnAngle < 0) {
-    Game.ship.turnStop();
-  } else if (keyCode == UP_ARROW || keyCode == DOWN_ARROW) {
-    Game.ship.boostStop();
+  if (Game.gameEnd) {
+    if (keyCode == 80 /*P*/)
+      Game.init();
+  } else {
+    if (keyCode == RIGHT_ARROW && Game.ship.turnAngle > 0) {
+      Game.ship.turnStop();
+    } else if (keyCode == LEFT_ARROW && Game.ship.turnAngle < 0) {
+      Game.ship.turnStop();
+    } else if (keyCode == UP_ARROW || keyCode == DOWN_ARROW) {
+      Game.ship.boostStop();
+    }
   }
 }

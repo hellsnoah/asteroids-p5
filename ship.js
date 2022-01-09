@@ -58,6 +58,17 @@ class Ship {
     Laser.create(this.pos.copy(), p5.Vector.fromAngle(this.heading - PI/2).mult(10))
   }
 
+  hits() {
+    // check Collion with asteroid
+    for (let i = Game.asteroids.length - 1; i >= 0; i--) {
+      let d = this.pos.dist(Game.asteroids[i].pos);
+      if (d < this.r + Game.asteroids[i].r) {
+        return true;
+      }
+    }
+    return false;
+  }
+
   tick() {
     // Turning
     this.heading += this.turnAngle;

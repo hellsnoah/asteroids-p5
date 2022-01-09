@@ -3,27 +3,65 @@ class Game {
   static ship;
   static cx;
   static cy;
+  static gameEnd;
+  static score;
   static astGenerator = defAstGenerator;
   static shipGenerator = defShipGenerator;
 
   static init() {
+    this.score = 0;
     this.ship = new Ship();
+    this.asteroids = [];
     for (let i = 0; i < 5; i++) {
       this.asteroids.push(new Asteroid());
     }
+    this.gameEnd = false;
   }
 
   static gameLoopFunc() {
-    let l = this.asteroids.length
-    for (let i = 0; i < l; i++) {
-      let asteroid = this.asteroids[i];
-      asteroid.tick();
-      asteroid.render();
+    background(0);
+    if (!this.gameEnd) {
+      let l = this.asteroids.length
+      for (let i = 0; i < l; i++) {
+        let asteroid = this.asteroids[i];
+        asteroid.tick();
+        asteroid.render();
+      }
+      Laser.tick();
+      Laser.render();
+      this.ship.tick(); // Update method
+      this.ship.render();
+
+      // Keep adding obstacles
+      for (let i = this.asteroids.length; i < 5; i++)
+        this.asteroids.push(new Asteroid());
+
+      // Display score
+      fill(255);
+      textSize(32);
+      text(this.score.toString(), 40, 40);
+      // Check colliion of ship
+      if (this.ship.hits())
+        this.gameEnd = true;
+    } else {
+      // Endscreen
+      let l = this.asteroids.length
+      for (let i = 0; i < l; i++) {
+        let asteroid = this.asteroids[i];
+        asteroid.render();
+      }
+      Laser.render();
+      this.ship.render();
+      fill(255);
+      textSize(32);
+      textAlign(CENTER, CENTER);
+      text(this.score.toString(), this.cx/2, this.cy/2);
+      text("Press 'P' to restart game!", this.cx/2, this.cy/2 + 50);
     }
-    Laser.tick();
-    Laser.render();
-    this.ship.tick(); // Update method
-    this.ship.render();
+  }
+
+  static increaseScore(r) {
+    this.score += floor(r);
   }
 
   static breakup(ast_index) {

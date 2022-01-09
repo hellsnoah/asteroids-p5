@@ -5,7 +5,7 @@ function defAstGenerator(r) {
   let maxOffset = r/2;
   let pos;
   while ((pos === undefined) ||
-         (pos.dist(Game.ship.pos) <= Game.ship.r * sqrt(2) + maxOffset)) {
+         (pos.dist(Game.ship.pos) <= (Game.ship.r + maxOffset) * 2)) {
     pos = createVector(random(Game.cx), random(Game.cy));
   }
 
