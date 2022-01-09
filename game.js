@@ -31,16 +31,22 @@ class Game {
     if (asteroid.r < 30) {
       this.asteroids.splice(ast_index, 1);
     } else {
-      let d = random();
-      let params = this.astGenerator(asteroid.r * d)
-      params.pos = asteroid.pos.copy();
-      params.vel = asteroid.vel.copy().mult(1-d).rotate(-1, 1);
-      asteroid.changeParams(params);
+      let k = random(0.25, 0.75);
+      let params1 = this.astGenerator(asteroid.r * pow(k, 1/3));
+      params1.pos = asteroid.pos.copy();
+      params1.vel = asteroid.vel.copy().mult(1/sqrt(1-k));
+      params1.vel.rotate(random(-1, 1));
+      this.asteroids.push(new Asteroid(params1));
 
-      params = this.astGenerator(asteroid.r * (1-d));
-      params.pos = asteroid.pos.copy();
-      params.vel = asteroid.vel.copy().mult(1-d).rotate(-1, 1);
-      this.asteroids.push(new Asteroid(params));
+      let params2 = this.astGenerator(asteroid.r * pow(1 - k, 1/3));
+      params2.pos = asteroid.pos.copy();
+      let moment_ast = asteroid.vel.copy().mult(pow(asteroid.r, 3));
+      let moment1 = params1.vel.copy().mult(pow(params1.r, 3));
+      let moment2 = moment_ast.sub(moment1);
+      params2.vel = moment2.div(pow(params2.r, 3))
+      this.asteroids.push(new Asteroid(params2));
+
+      this.asteroids.splice(ast_index, 1);
     }
   }
 }

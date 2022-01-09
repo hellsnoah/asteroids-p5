@@ -1,4 +1,5 @@
 function setup() {
+  Logger.useDefaults();
   Game.cx = windowWidth - 50;
   Game.cy = windowHeight - 50;
   createCanvas(Game.cx, Game.cy);
