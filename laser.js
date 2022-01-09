@@ -9,7 +9,7 @@ class Laser {
   }
 
   static tick() {
-    for (let i = 0; i < this.lasers.length; i++) {
+    for (let i = this.lasers.length - 1; i >= 0; i--) {
       let laser = this.lasers[i];
       let gv = createVector(Game.cx, Game.cy);
       laser.pos.add(laser.vel);
@@ -18,12 +18,12 @@ class Laser {
       laser.pos.rem(gv);
 
       // Check if it hits any asteroids
-      for (let j = 0; j < Game.asteroids.length; j++) {
+      for (let j = Game.asteroids.length - 1; j >= 0; j--) {
         let asteroid = Game.asteroids[j];
         let d = asteroid.pos.dist(laser.pos);
         if (d < asteroid.r) { // Hits
           Game.breakup(j);
-          this.lasers.splice(i--, 1);
+          this.lasers.splice(i, 1);
           break;
         }
       };
